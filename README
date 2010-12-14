@@ -1,0 +1,5 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=3370
+
+A simple plugins that would help to manage skeletons(templates) for automate the creation of new files and insert tags (user definible) like <user> , <date>, <askversion>  and so on.
+
+(be patient is my first plugin)

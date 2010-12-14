@@ -1,0 +1,8 @@
+author=expand("$USER")
+date=strftime("%d\\/%m\\/%Y")
+filename=expand("%:.")
+" chiedo a runtime un valore per per il tag e visualizzo come prompt la riga
+ask=inputdialog(getline("."))
+home=expand('$HOME')
+askversion=inputdialog("Vesrion","1.0.0")
+version="1.0.0"
