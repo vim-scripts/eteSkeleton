@@ -57,6 +57,23 @@ Once the skeleton is loaded, the tags in the "test_script.py" file will be
 replaced by the tags in eteSskeleton.tags (which are located in the plugin 
 directory).
 
+You can enable loose filename matching by setting g:EteSkeleton_loosefiletype
+to true in your ~/.vimrc.  This will cause any filename to match against a
+skeleton file regardess of the _.
+
+example >
+        let g:EteSkeleton_loosefiletype = 1
+
+        ~/.vim/skeleton/python
+        ~/.vim/skeleton/test_python
+
+        :e test.py
+
+        In this case, |eteSkeleton| will load "test_python" skeleton file.
+
+
+
+
 ==============================================================================
 USAGE                                                   *eteSkeleton-usage*
 
