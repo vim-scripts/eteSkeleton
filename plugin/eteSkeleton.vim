@@ -29,8 +29,12 @@ endif
 let g:loaded_eteSkeleton = 101  
 let s:save_cpo = &cpo
 let s:ETES_SKELETONS = "skeleton"
-let s:ETES_TAGS = globpath(&rtp,"plugin/eteSkeleton.tags")
+let s:ETES_TAGS = globpath(&rtp,s:ETES_SKELETONS."tags/eteSkeleton.tags")
 set cpo&vim
+
+if !isdirectory(fnamemodify(s:ETES_TAGS, ":p:h"))
+    mkdir(fnamemodify(s:ETES_TAGS, ":p:h"))
+endif
 
 if !exists("g:EteSkeleton_loosefiletype")
     let g:EteSkeleton_loosefiletype = 0

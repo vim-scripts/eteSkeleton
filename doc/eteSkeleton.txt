@@ -123,7 +123,7 @@ COMMANDS                                                *eteSkeleton-commands*
 TAGS                                                    *eteSkeleton-tags*
 
 Tags are a simple list of tagname=tagvalue stored in the "eteSkeleton.tags" 
-file (which is located in the plugin folder). It can be manually edited or 
+file (which is located in the $VIMRUNTIME/skeleton/tags folder). It can be manually edited or 
 modified by the eteSkeleton commands. Please note that the {tagname} must be 
 written without the <> symbols in the tag list; however, as the {tagvalue} will 
 be evaluated, you must use quotes (i.e. " ") when you write Strings.
