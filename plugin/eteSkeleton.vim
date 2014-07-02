@@ -1,5 +1,5 @@
 " eteSkeleton
-" Autor: ellethee <ellethee@altervista.org> 
+" Autor: ellethee <ellethee@altervista.org>
 " Version: 1.0.1
 " License: MIT
 " Last change: 2010 Dec 14
@@ -26,11 +26,19 @@
 if exists("g:loaded_eteSkeleton") || &cp
     finish
 endif
-let g:loaded_eteSkeleton = 101  
+let g:loaded_eteSkeleton = 101
 let s:save_cpo = &cpo
 let s:ETES_SKELETONS = "skeleton"
-let s:ETES_TAGS = globpath(&rtp,"plugin/eteSkeleton.tags")
+let s:ETES_TAGS = globpath(&rtp,s:ETES_SKELETONS."/tags/eteSkeleton.tags")
 set cpo&vim
+
+if !exists("s:ETES_TAGS")
+    echom "Can't find " $HOME."/.vim/".s:ETES_SKELETONS."/tags/eteSkeleton.tags"
+endif
+
+if !exists("g:EteSkeleton_loosefiletype")
+    let g:EteSkeleton_loosefiletype = 0
+endif
 
 command! -nargs=0 EteSkeleton call s:eteSkeleton_get()
 command! -nargs=0 EteSkelList call s:eteSkeleton_list()
@@ -51,21 +59,29 @@ fu! s:eteSkeleton_makeskel(...)
     echo "Creo lo skeletro: ".l:path."/".l:name
     exec ":w! ".l:path."/".l:name
     exec ":e! ".l:path."/".l:name
-endfu 
+endfu
 fu! s:msort(l1, l2)
     return len(a:l2) - len(a:l1)
 endfu
 fu! s:eteSkeleton_list()
-    for riga in readfile(s:ETES_TAGS)
-        echo riga
-    endfor
+    if exists("s:ETES_TAGS")
+        for riga in readfile(s:ETES_TAGS)
+            echo riga
+        endfor
+    else
+        echo "No tags"
+    endif
 endfu
 fu! s:eteSkeleton_addtag()
-    let l:cword = expand("<cWORD>")
-    if len(l:cword)
-        call s:eteSkeleton_add(l:cword)
+    if exists("s:ETES_TAGS")
+        let l:cword = expand("<cWORD>")
+        if len(l:cword)
+            call s:eteSkeleton_add(l:cword)
+        else
+            echoerr "Posizionarsi su di una parola"
+        endif
     else
-        echoerr "Posizionarsi su di una parola"
+        echoerr "no tagfile found"
     endif
 endfu
 fu! s:eteSkeleton_add(tag)
@@ -87,25 +103,31 @@ fu! s:eteSkeleton_add(tag)
     call writefile(l:lista, s:ETES_TAGS)
 endfu
 fu! s:eteSkeleton_del(tag)
-    let l:tag = substitute(substitute(a:tag,"<","",""),">","","")
-    let l:lista = readfile(s:ETES_TAGS)
-    call filter(l:lista,'v:val !~ "^'.l:tag.'="')
-    call writefile(l:lista, s:ETES_TAGS)
+    if exists("s:ETES_TAGS")
+        let l:tag = substitute(substitute(a:tag,"<","",""),">","","")
+        let l:lista = readfile(s:ETES_TAGS)
+        call filter(l:lista,'v:val !~ "^'.l:tag.'="')
+        call writefile(l:lista, s:ETES_TAGS)
+    endif
 endfu
 fu! s:eteSkeleton_replace()
     for l:riga in readfile(s:ETES_TAGS)
         if l:riga[0] != '"' && len(l:riga[0]) != 0
-            let l:vals = split(l:riga, "=") 
+            let l:vals = split(l:riga, "=")
             for l:idx in range(1,line("$"))
                 if getline(l:idx) =~ "<".l:vals[0].">"
-                    silent! exec l:idx."s/<".l:vals[0].">/".eval(l:vals[1])
+                    silent! exec l:idx."s#<".l:vals[0].">#".eval(l:vals[1])."#g"
                endif
             endfor
         endif
     endfor
 endfu
 fu! s:eteSkeleton_get()
-    let l:fname = expand("%:r")
+    if g:EteSkeleton_loosefiletype
+      let l:fname = expand("%:t:r") . "_" . &l:filetype
+    else
+      let l:fname = expand("%:t:r")
+    endif
     let l:rlist = sort(map(split(globpath(&rtp, s:ETES_SKELETONS."/*".
                 \&l:filetype."*"),"\n"),'fnamemodify(v:val,":t")'), "s:msort")
     for l:item in l:rlist
@@ -114,16 +136,18 @@ fu! s:eteSkeleton_get()
                         \l:item))
             if len(l:pfile)
                 silent keepalt 0 read `=join(l:pfile)`
-                call s:eteSkeleton_replace()
+                if exists("s:ETES_TAGS")
+                    call s:eteSkeleton_replace()
+                endif
             endif
             break
         endif
     endfor
-    return 
-endfu 
+    return
+endfu
 fu! s:eteSkeleton_check()
     if &l:filetype != ""
-        execute "EteSkeleton" 
+        execute "EteSkeleton"
     endif
     return
 endfu
@@ -135,4 +159,4 @@ augroup END
 let &cpo= s:save_cpo
 unlet s:save_cpo
 
-" vim:fdm=marker:
+" vim:fdm=marker tw=4 sw=4:
